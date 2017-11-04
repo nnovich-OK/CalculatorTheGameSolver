@@ -14,6 +14,7 @@ using namespace std;
 const std::vector<ConsoleInterface::Command> ConsoleInterface::commands = {
 	{ "moves",  "m", &handleMoveCount },
 	{ "goal",   "g", &handleGoal },
+	{ "base",   "b", &handleBaseValue },
 	{ "add",    "a", &handleAddButton },
 	{ "remove", "r", &handleRemoveButton },
 	{ "clear",  "c", &handleClearTask },
@@ -97,6 +98,18 @@ void ConsoleInterface::handleGoal(std::string params)
 {
 	try {
 		m_task->setGoal(stoi(params));
+	}
+	catch (const logic_error& e) {
+		// stoi obviously failed
+		(void)e;
+		throw CommandParameterParseException(params);
+	}
+}
+
+void ConsoleInterface::handleBaseValue(std::string params)
+{
+	try {
+		m_task->setBaseValue(stoi(params));
 	}
 	catch (const logic_error& e) {
 		// stoi obviously failed

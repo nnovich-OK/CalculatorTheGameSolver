@@ -19,6 +19,7 @@ private:
 
 	void handleMoveCount(std::string params);
 	void handleGoal(std::string params);
+	void handleBaseValue(std::string params);
 	void handleAddButton(std::string params);
 	void handleRemoveButton(std::string params);
 	void handleClearTask(std::string params);
