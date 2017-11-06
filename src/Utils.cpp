@@ -11,3 +11,12 @@ string Utils::removeCharsFromString(string str, const char* charsToRemove) {
 
 	return str;
 }
+
+std::string Utils::removeLeadingSpaces(const std::string & str)
+{
+	size_t leadingSpacesCount = 0;
+	while (leadingSpacesCount < str.length() && str[leadingSpacesCount] == ' ') {
+		leadingSpacesCount++;
+	}
+	return str.substr(leadingSpacesCount);
+}

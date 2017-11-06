@@ -14,14 +14,14 @@ shared_ptr<BaseOperation> BaseOperation::createOperation(const std::type_info& i
 	return nullptr;
 }
 
-std::optional<Task> AdditionOperation::apply(Task task)
+std::optional<Task> AdditionOperation::apply(Task task) const
 {
 	task.decreaseMoveCount();
 	task.setBaseValue(task.getBaseValue() + m_summand);
 	return task;
 }
 
-std::optional<Task> MultiplicationOperation::apply(Task task)
+std::optional<Task> MultiplicationOperation::apply(Task task) const
 {
 	task.decreaseMoveCount();
 	task.setBaseValue(task.getBaseValue() * m_multiplier);

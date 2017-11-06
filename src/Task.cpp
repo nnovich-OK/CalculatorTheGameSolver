@@ -11,7 +11,7 @@ Task::Task(const Task& task)
 	m_goal = task.m_goal;
 	m_baseValue = task.m_baseValue;
 
-	for (auto& operation : task.m_operations) {
+	for (auto operation : task.m_operations) {
 		m_operations.push_back(operation->clone());
 	}
 }
@@ -38,7 +38,7 @@ bool Task::operator==(const Task& task) const
 		return false;
 	}
 
-	for (auto& operation : task.m_operations) {
+	for (auto operation : task.m_operations) {
 		if (findOperation(operation) == m_operations.end()) {
 			return false;
 		}

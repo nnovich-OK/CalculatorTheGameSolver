@@ -13,26 +13,17 @@
 using namespace std;
 
 const std::vector<ConsoleInterface::Command> ConsoleInterface::commands = {
-	{ "moves",  "m", &handleMoveCount },
-	{ "goal",   "g", &handleGoal },
-	{ "base",   "b", &handleBaseValue },
-	{ "add",    "a", &handleAddButton },
-	{ "remove", "r", &handleRemoveButton },
-	{ "clear",  "c", &handleClearTask },
-	{ "quit",   "q", &handleQuit },
-	{ "solve",  "s", &handleSolve },
-	{ "help",   "h", &handleHelp },
-	{ "info",   "i", &handleInfo}
+	{ "moves",    "m", &handleMoveCount },
+	{ "goal",     "g", &handleGoal },
+	{ "base",     "b", &handleBaseValue },
+	{ "add",      "a", &handleAddButton },
+	{ "remove",   "r", &handleRemoveButton },
+	{ "clear",    "c", &handleClearTask },
+	{ "quit",     "q", &handleQuit },
+	{ "solution", "s", &handleSolution },
+	{ "help",     "h", &handleHelp },
+	{ "info",     "i", &handleInfo}
 };
-
-std::string ConsoleInterface::removeLeadingSpaces(const std::string & str)
-{
-	size_t leadingSpacesCount = 0;
-	while (leadingSpacesCount < str.length() && str[leadingSpacesCount] == ' ') {
-		leadingSpacesCount++;
-	}
-	return str.substr(leadingSpacesCount);
-}
 
 void ConsoleInterface::main()
 {
@@ -49,7 +40,7 @@ void ConsoleInterface::main()
 
 		// Normalize input
 		std::transform(commandLine.begin(), commandLine.end(), commandLine.begin(), ::tolower);
-		commandLine = removeLeadingSpaces(commandLine);
+		commandLine = Utils::removeLeadingSpaces(commandLine);
 
 		// Divide into command itself and its parameters
 		size_t spacePos = commandLine.find(' ');
@@ -60,7 +51,7 @@ void ConsoleInterface::main()
 
 		string commandParams;
 		if (spacePos != string::npos) {
-			commandParams = removeLeadingSpaces(commandLine.substr(spacePos));
+			commandParams = Utils::removeLeadingSpaces(commandLine.substr(spacePos));
 		}
 
 		bool commandFound = false;
@@ -81,6 +72,41 @@ void ConsoleInterface::main()
 			cout << "Invalid input. Type \"help\" for list of supported commands." << endl;
 		}
 	}
+}
+
+string ConsoleInterface::stringifySolution(const Solution & solution) const
+{
+	string rez;
+	for (SolutionStep step : solution) {
+		rez += stringifyOperation(*step) + " ";
+	}
+	return rez;
+}
+
+std::string ConsoleInterface::stringifyOperation(const BaseOperation & operation) const
+{
+	const type_info& info = typeid(operation);
+
+	if (info == typeid(AdditionOperation)) {
+		int summand = get<int>(operation.getParams());
+		if (summand > 0) {
+			return "+" + to_string(summand);
+		}
+		else {
+			return to_string(summand);
+		}
+	}
+	else if (info == typeid(MultiplicationOperation)) {
+		int multiplier = get<int>(operation.getParams());
+		if (multiplier < 0) {
+			return "x(" + to_string(multiplier) + ")";
+		}
+		else {
+			return 'x' + to_string(multiplier);
+		}
+	}
+
+	return string();
 }
 
 void ConsoleInterface::handleMoveCount(std::string params)
@@ -161,9 +187,19 @@ void ConsoleInterface::handleQuit(std::string params)
 	m_quitFlag = true;
 }
 
-void ConsoleInterface::handleSolve(std::string params)
+void ConsoleInterface::handleSolution(std::string params)
 {
-
+	vector<Solution> solutions = m_solver.getSolutions(*m_task);
+	if (solutions.empty()) {
+		cout << "Task doesn't have solutions" << endl;
+	} else if (params == "best") {
+		cout << stringifySolution(solutions[0]) << endl;
+	}
+	else {
+		for (const auto& solution : solutions) {
+			cout << stringifySolution(solution) << endl;
+		}
+	}
 }
 
 void ConsoleInterface::handleHelp(std::string params)

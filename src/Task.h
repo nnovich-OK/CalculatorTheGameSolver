@@ -16,7 +16,7 @@ public:
 
 	void setMoveCount(int count) { m_moveCount = count; }
 	void decreaseMoveCount()     { m_moveCount--; }
-	bool isOutOfMoves() const    { return (m_moveCount == 0); }
+	bool isOutOfMoves() const    { return (m_moveCount <= 0); }
 
 	void setGoal(int goal)       { m_goal = goal; }
 	bool isSolved() const        { return (m_goal == m_baseValue); }
@@ -27,8 +27,10 @@ public:
 	void addOperation(const std::type_info& info, const OperationParameters& params);
 	void removeOperation(std::type_info info, OperationParameters params);
 	void removeOperationByIndex(int index);
+	const std::vector<std::shared_ptr<BaseOperation>>& getOperations() { return m_operations; }
 
 	bool operator==(const Task& task) const;
+	bool operator!=(const Task& task) const { return !(*this == task); }
 
 protected:
 	std::vector<std::shared_ptr<BaseOperation>>::const_iterator

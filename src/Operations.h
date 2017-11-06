@@ -14,13 +14,13 @@ class BaseOperation {
 public:
 	virtual ~BaseOperation() {}
 
-	virtual std::optional<Task> apply(Task task) = 0;
+	virtual std::optional<Task> apply(Task task) const = 0;
 
 	virtual void updateParams(OperationParameters params) = 0;
 
-	virtual OperationParameters getParams() = 0;
+	virtual OperationParameters getParams() const = 0;
 
-	virtual std::shared_ptr<BaseOperation> clone() = 0;
+	virtual std::shared_ptr<BaseOperation> clone() const = 0;
 
 	static std::shared_ptr<BaseOperation> createOperation(const std::type_info& info, const OperationParameters& param);
 };
@@ -36,17 +36,17 @@ public:
 	AdditionOperation(const AdditionOperation& operation)
 		: m_summand(operation.m_summand) {}
 
-	virtual std::optional<Task> apply(Task task);
+	virtual std::optional<Task> apply(Task task) const;
 
 	virtual void updateParams(OperationParameters params) {
 		m_summand = std::get<int>(params);
 	}
 
-	virtual OperationParameters getParams() {
+	virtual OperationParameters getParams() const {
 		return OperationParameters(m_summand);
 	}
 
-	virtual std::shared_ptr<BaseOperation> clone() {
+	virtual std::shared_ptr<BaseOperation> clone() const {
 		return std::make_shared<AdditionOperation>(*this);
 	}
 };
@@ -63,17 +63,17 @@ public:
 	MultiplicationOperation(const MultiplicationOperation& operation)
 		: m_multiplier (operation.m_multiplier) {}
 
-	virtual std::optional<Task> apply(Task task);
+	virtual std::optional<Task> apply(Task task) const;
 
 	virtual void updateParams(OperationParameters params) {
 		m_multiplier = std::get<int>(params);
 	}
 
-	virtual OperationParameters getParams() {
+	virtual OperationParameters getParams() const {
 		return OperationParameters(m_multiplier);
 	}
 
-	virtual std::shared_ptr<BaseOperation> clone() {
+	virtual std::shared_ptr<BaseOperation> clone() const {
 		return std::make_shared<MultiplicationOperation>(*this);
 	}
 };
