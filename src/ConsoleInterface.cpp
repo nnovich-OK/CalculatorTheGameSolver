@@ -3,6 +3,7 @@
 #include "Operations.h"
 #include "Task.h"
 #include "CommandException.h"
+#include "Utils.h"
 
 #include <vector>
 #include <string>
@@ -35,7 +36,7 @@ std::string ConsoleInterface::removeLeadingSpaces(const std::string & str)
 
 void ConsoleInterface::main()
 {
-	m_task = make_unique<Task>();
+	m_task = make_shared<Task>();
 
 	cout << "Welcome to \"Calculator: The Game\" solver." << endl
 	     << "Type help to get list of supported commands." << endl;
@@ -120,8 +121,30 @@ void ConsoleInterface::handleBaseValue(std::string params)
 
 void ConsoleInterface::handleAddButton(std::string params)
 {
+	if (params.empty()) {
+		throw CommandMissingParameterException();
+	}
 
+	string coeff;
+	try {
+		switch (params[0]) {
+		case '+':
+		case '-':
+			m_task->addOperation(typeid(AdditionOperation), stoi(params));
+			break;
+		case 'x':
+			coeff = Utils::removeCharsFromString(params, "x()");
+			m_task->addOperation(typeid(MultiplicationOperation), stoi(coeff));
+			break;
+		}
+	}
+	catch (const logic_error& e) {
+		// stoi obviously failed
+		(void)e;
+		throw CommandParameterParseException(params);
+	}
 }
+
 
 void ConsoleInterface::handleRemoveButton(std::string params)
 {
@@ -130,7 +153,7 @@ void ConsoleInterface::handleRemoveButton(std::string params)
 
 void ConsoleInterface::handleClearTask(std::string params)
 {
-	m_task = make_unique<Task>();
+	m_task = make_shared<Task>();
 }
 
 void ConsoleInterface::handleQuit(std::string params)

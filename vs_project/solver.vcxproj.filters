@@ -29,6 +29,9 @@
     <ClCompile Include="..\src\CommandException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ConsoleInterface.h">
@@ -44,6 +47,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\CommandException.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\OperationParams.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -38,7 +38,7 @@ private:
 
 	static const std::vector<Command> commands;
 
-	std::unique_ptr<Task> m_task = std::make_unique<Task>();
+	std::shared_ptr<Task> m_task = std::make_shared<Task>();
 	bool m_quitFlag = false;
 	bool m_restartFlag = false;
 };

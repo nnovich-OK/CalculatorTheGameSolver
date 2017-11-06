@@ -120,13 +120,16 @@
     <ClCompile Include="..\src\Operations.cpp" />
     <ClCompile Include="..\src\Solver.cpp" />
     <ClCompile Include="..\src\Task.cpp" />
+    <ClCompile Include="..\src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\CommandException.h" />
     <ClInclude Include="..\src\ConsoleInterface.h" />
+    <ClInclude Include="..\src\OperationParams.h" />
     <ClInclude Include="..\src\Operations.h" />
     <ClInclude Include="..\src\Solver.h" />
     <ClInclude Include="..\src\Task.h" />
+    <ClInclude Include="..\src\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
