@@ -24,9 +24,18 @@ public:
 	void setBaseValue(int value) { m_baseValue = value; }
 	int getBaseValue() const     { return m_baseValue; }
 
-	void addOperation(const std::type_info& info, const OperationParameters& param);
-	void removeOperation(std::type_info info, OperationParameters param);
+	void addOperation(const std::type_info& info, const OperationParameters& params);
+	void removeOperation(std::type_info info, OperationParameters params);
 	void removeOperationByIndex(int index);
+
+	bool operator==(const Task& task) const;
+
+protected:
+	std::vector<std::shared_ptr<BaseOperation>>::const_iterator
+		findOperation(const std::type_info& info, const OperationParameters& params) const;
+
+	std::vector<std::shared_ptr<BaseOperation>>::const_iterator
+		findOperation(std::shared_ptr<BaseOperation> operation) const;
 
 private:
 	int m_moveCount = 0;

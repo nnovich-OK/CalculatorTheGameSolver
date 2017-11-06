@@ -18,7 +18,7 @@ public:
 
 	virtual void updateParams(OperationParameters params) = 0;
 
-	virtual OperationParameters getParams();
+	virtual OperationParameters getParams() = 0;
 
 	virtual std::shared_ptr<BaseOperation> clone() = 0;
 

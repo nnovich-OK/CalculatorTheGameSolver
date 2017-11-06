@@ -19,7 +19,7 @@ public:
 class CommandButtonDuplicateException : public CommandException {
 public:
 	explicit CommandButtonDuplicateException(const std::string& buttonStringId)
-		: CommandException("button \"" + buttonStringId + "\" is already added\n") {}
+		: CommandException("button already exists\n") {}
 };
 
 class CommandMissingParameterException : public CommandException {
