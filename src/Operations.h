@@ -23,6 +23,9 @@ public:
 	virtual std::shared_ptr<BaseOperation> clone() const = 0;
 
 	static std::shared_ptr<BaseOperation> createOperation(const std::type_info& info, const OperationParameters& param);
+
+protected:
+	static bool verifyChange(int origValue, int modValue);
 };
 
 class AdditionOperation : public BaseOperation {
@@ -75,6 +78,33 @@ public:
 
 	virtual std::shared_ptr<BaseOperation> clone() const {
 		return std::make_shared<MultiplicationOperation>(*this);
+	}
+};
+
+class DivisionOperation : public BaseOperation {
+private:
+	int m_divisor;
+
+public:
+	DivisionOperation(OperationParameters n) {
+		m_divisor = std::get<int>(n);
+	}
+
+	DivisionOperation(const DivisionOperation& operation)
+		: m_divisor(operation.m_divisor) {}
+
+	virtual std::optional<Task> apply(Task task) const;
+
+	virtual void updateParams(OperationParameters params) {
+		m_divisor = std::get<int>(params);
+	}
+
+	virtual OperationParameters getParams() const {
+		return OperationParameters(m_divisor);
+	}
+
+	virtual std::shared_ptr<BaseOperation> clone() const {
+		return std::make_shared<DivisionOperation>(*this);
 	}
 };
 

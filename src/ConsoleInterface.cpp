@@ -105,6 +105,15 @@ std::string ConsoleInterface::stringifyOperation(const BaseOperation & operation
 			return 'x' + to_string(multiplier);
 		}
 	}
+	else if (info == typeid(DivisionOperation)) {
+		int divisor = get<int>(operation.getParams());
+		if (divisor < 0) {
+			return "/(" + to_string(divisor) + ")";
+		}
+		else {
+			return '/' + to_string(divisor);
+		}
+	}
 
 	return string();
 }
@@ -161,6 +170,10 @@ void ConsoleInterface::handleAddButton(std::string params)
 		case 'x':
 			coeff = Utils::removeCharsFromString(params, "x()");
 			m_task->addOperation(typeid(MultiplicationOperation), stoi(coeff));
+			break;
+		case '/':
+			coeff = Utils::removeCharsFromString(params, "/()");
+			m_task->addOperation(typeid(DivisionOperation), stoi(coeff));
 			break;
 		}
 	}
