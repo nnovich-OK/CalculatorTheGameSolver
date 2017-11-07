@@ -108,4 +108,23 @@ public:
 	}
 };
 
+class CutOperation : public BaseOperation {
+public:
+	CutOperation(OperationParameters n) {}
+
+	CutOperation(const CutOperation& operation) {}
+
+	virtual std::optional<Task> apply(Task task) const;
+
+	virtual void updateParams(OperationParameters params) {}
+
+	virtual OperationParameters getParams() const {
+		return OperationParameters();
+	}
+
+	virtual std::shared_ptr<BaseOperation> clone() const {
+		return std::make_shared<CutOperation>(*this);
+	}
+};
+
 #endif

@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -114,6 +115,9 @@ std::string ConsoleInterface::stringifyOperation(const BaseOperation & operation
 			return '/' + to_string(divisor);
 		}
 	}
+	else if (info == typeid(CutOperation)) {
+		return "<<";
+	}
 
 	return string();
 }
@@ -174,6 +178,11 @@ void ConsoleInterface::handleAddButton(std::string params)
 		case '/':
 			coeff = Utils::removeCharsFromString(params, "/()");
 			m_task->addOperation(typeid(DivisionOperation), stoi(coeff));
+			break;
+		case '<':
+			assert(params.length() == 2);
+			assert(params[1] == '<');
+			m_task->addOperation(typeid(CutOperation), OperationParameters());
 			break;
 		}
 	}

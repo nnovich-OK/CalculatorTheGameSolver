@@ -13,6 +13,9 @@ shared_ptr<BaseOperation> BaseOperation::createOperation(const std::type_info& i
 	else if (info == typeid(DivisionOperation)) {
 		return make_shared<DivisionOperation>(param);
 	}
+	else if (info == typeid(CutOperation)) {
+		return make_shared<CutOperation>(param);
+	}
 	
 	return nullptr;
 }
@@ -62,6 +65,20 @@ std::optional<Task> DivisionOperation::apply(Task task) const
 	}
 
 	int modValue = origValue / m_divisor;
+
+	if (!BaseOperation::verifyChange(origValue, modValue)) {
+		return nullopt;
+	}
+
+	task.decreaseMoveCount();
+	task.setBaseValue(modValue);
+	return task;
+}
+
+std::optional<Task> CutOperation::apply(Task task) const
+{
+	int origValue = task.getBaseValue();
+	int modValue = origValue / 10;
 
 	if (!BaseOperation::verifyChange(origValue, modValue)) {
 		return nullopt;
