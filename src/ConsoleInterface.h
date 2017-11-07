@@ -12,8 +12,6 @@ class ConsoleInterface {
 public:
 	void main();
 
-
-
 private:
 	std::string stringifySolution(const Solution& solution) const;
 	std::string stringifyOperation(const BaseOperation& operation) const;
@@ -42,7 +40,6 @@ private:
 	std::shared_ptr<Task> m_task = std::make_shared<Task>();
 	Solver m_solver;
 	bool m_quitFlag = false;
-	bool m_restartFlag = false;
 };
 
 #endif

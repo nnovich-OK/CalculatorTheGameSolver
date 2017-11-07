@@ -43,7 +43,7 @@ void Solver::solveHelper(Task task, Solution solutionCandidate)
 	}
 
 	for (auto operation : task.getOperations()) {
-		std::optional<Task> modifiedTask = operation->apply(task);
+		optional<Task> modifiedTask = operation->apply(task);
 
 		if (modifiedTask.has_value()) {
 			Solution updatedCandidate(solutionCandidate);

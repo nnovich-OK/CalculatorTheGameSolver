@@ -13,7 +13,7 @@
 
 using namespace std;
 
-const std::vector<ConsoleInterface::Command> ConsoleInterface::commands = {
+const vector<ConsoleInterface::Command> ConsoleInterface::commands = {
 	{ "moves",    "m", &handleMoveCount },
 	{ "goal",     "g", &handleGoal },
 	{ "base",     "b", &handleBaseValue },
@@ -40,7 +40,7 @@ void ConsoleInterface::main()
 		getline(cin, commandLine);
 
 		// Normalize input
-		std::transform(commandLine.begin(), commandLine.end(), commandLine.begin(), ::tolower);
+		transform(commandLine.begin(), commandLine.end(), commandLine.begin(), ::tolower);
 		commandLine = Utils::reduce(commandLine);
 
 		// Divide into command itself and its parameters
@@ -85,7 +85,7 @@ string ConsoleInterface::stringifySolution(const Solution & solution) const
 	return rez;
 }
 
-std::string ConsoleInterface::stringifyOperation(const BaseOperation & operation) const
+string ConsoleInterface::stringifyOperation(const BaseOperation & operation) const
 {
 	const type_info& info = typeid(operation);
 
@@ -127,7 +127,7 @@ std::string ConsoleInterface::stringifyOperation(const BaseOperation & operation
 	return string();
 }
 
-void ConsoleInterface::handleMoveCount(std::string params)
+void ConsoleInterface::handleMoveCount(string params)
 {
 	try {
 		m_task->setMoveCount(stoi(params));
@@ -139,7 +139,7 @@ void ConsoleInterface::handleMoveCount(std::string params)
 	}
 }
 
-void ConsoleInterface::handleGoal(std::string params)
+void ConsoleInterface::handleGoal(string params)
 {
 	try {
 		m_task->setGoal(stoi(params));
@@ -151,7 +151,7 @@ void ConsoleInterface::handleGoal(std::string params)
 	}
 }
 
-void ConsoleInterface::handleBaseValue(std::string params)
+void ConsoleInterface::handleBaseValue(string params)
 {
 	try {
 		m_task->setBaseValue(stoi(params));
@@ -163,7 +163,7 @@ void ConsoleInterface::handleBaseValue(std::string params)
 	}
 }
 
-void ConsoleInterface::handleAddButton(std::string params)
+void ConsoleInterface::handleAddButton(string params)
 {
 	if (params.empty()) {
 		throw CommandMissingParameterException();
@@ -209,22 +209,22 @@ void ConsoleInterface::handleAddButton(std::string params)
 }
 
 
-void ConsoleInterface::handleRemoveButton(std::string params)
+void ConsoleInterface::handleRemoveButton(string params)
 {
 	
 }
 
-void ConsoleInterface::handleClearTask(std::string params)
+void ConsoleInterface::handleClearTask(string params)
 {
 	m_task = make_shared<Task>();
 }
 
-void ConsoleInterface::handleQuit(std::string params)
+void ConsoleInterface::handleQuit(string params)
 {
 	m_quitFlag = true;
 }
 
-void ConsoleInterface::handleSolution(std::string params)
+void ConsoleInterface::handleSolution(string params)
 {
 	vector<Solution> solutions = m_solver.getSolutions(*m_task);
 	if (solutions.empty()) {
@@ -239,12 +239,12 @@ void ConsoleInterface::handleSolution(std::string params)
 	}
 }
 
-void ConsoleInterface::handleHelp(std::string params)
+void ConsoleInterface::handleHelp(string params)
 {
 
 }
 
-void ConsoleInterface::handleInfo(std::string params)
+void ConsoleInterface::handleInfo(string params)
 {
 
 }

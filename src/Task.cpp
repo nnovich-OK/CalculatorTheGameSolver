@@ -48,7 +48,7 @@ bool Task::operator==(const Task& task) const
 }
 
 vector<shared_ptr<BaseOperation>>::const_iterator
-	Task::findOperation(const std::type_info& info, const OperationParameters & params) const
+	Task::findOperation(const type_info& info, const OperationParameters & params) const
 {
 
 	for (auto it = m_operations.begin(); it != m_operations.end(); it++) {
@@ -62,7 +62,7 @@ vector<shared_ptr<BaseOperation>>::const_iterator
 	return m_operations.end();
 }
 
-std::vector<std::shared_ptr<BaseOperation>>::const_iterator Task::findOperation(std::shared_ptr<BaseOperation> operation) const
+vector<shared_ptr<BaseOperation>>::const_iterator Task::findOperation(shared_ptr<BaseOperation> operation) const
 {
 	return findOperation(typeid(*operation), operation->getParams());
 }

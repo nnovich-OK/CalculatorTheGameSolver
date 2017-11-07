@@ -27,7 +27,7 @@ public:
 	void addOperation(const std::type_info& info, const OperationParameters& params);
 	void removeOperation(std::type_info info, OperationParameters params);
 	void removeOperationByIndex(int index);
-	const std::vector<std::shared_ptr<BaseOperation>>& getOperations() { return m_operations; }
+	const std::vector<std::shared_ptr<BaseOperation>>& getOperations() const { return m_operations; }
 
 	bool operator==(const Task& task) const;
 	bool operator!=(const Task& task) const { return !(*this == task); }

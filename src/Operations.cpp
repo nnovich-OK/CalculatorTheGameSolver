@@ -2,7 +2,7 @@
 
 using namespace std;
 
-shared_ptr<BaseOperation> BaseOperation::createOperation(const std::type_info& info, const OperationParameters& param)
+shared_ptr<BaseOperation> BaseOperation::createOperation(const type_info& info, const OperationParameters& param)
 {
 	if (info == typeid(AdditionOperation)) {
 		return make_shared<AdditionOperation>(param);
@@ -32,7 +32,7 @@ bool BaseOperation::verifyChange(int origValue, int modValue)
 		&& modValue >= minValue);
 }
 
-std::optional<Task> AdditionOperation::apply(Task task) const
+optional<Task> AdditionOperation::apply(Task task) const
 {
 	int origValue = task.getBaseValue();
 	int modValue = origValue + m_summand;
@@ -46,7 +46,7 @@ std::optional<Task> AdditionOperation::apply(Task task) const
 	return task;
 }
 
-std::optional<Task> MultiplicationOperation::apply(Task task) const
+optional<Task> MultiplicationOperation::apply(Task task) const
 {
 	int origValue = task.getBaseValue();
 	int modValue = origValue * m_multiplier;
@@ -60,7 +60,7 @@ std::optional<Task> MultiplicationOperation::apply(Task task) const
 	return task;
 }
 
-std::optional<Task> DivisionOperation::apply(Task task) const
+optional<Task> DivisionOperation::apply(Task task) const
 {
 	int origValue = task.getBaseValue();
 	if (origValue % m_divisor != 0) {
@@ -78,7 +78,7 @@ std::optional<Task> DivisionOperation::apply(Task task) const
 	return task;
 }
 
-std::optional<Task> CutOperation::apply(Task task) const
+optional<Task> CutOperation::apply(Task task) const
 {
 	int origValue = task.getBaseValue();
 	int modValue = origValue / 10;
@@ -92,7 +92,7 @@ std::optional<Task> CutOperation::apply(Task task) const
 	return task;
 }
 
-std::optional<Task> AppendOperation::apply(Task task) const
+optional<Task> AppendOperation::apply(Task task) const
 {
 	int origValue = task.getBaseValue();
 	
