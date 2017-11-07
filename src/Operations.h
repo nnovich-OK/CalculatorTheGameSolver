@@ -127,4 +127,31 @@ public:
 	}
 };
 
+class AppendOperation : public BaseOperation {
+private:
+	int m_appendix;
+
+public:
+	AppendOperation(OperationParameters n) {
+		m_appendix = std::get<int>(n);
+	}
+
+	AppendOperation(const AppendOperation& operation)
+		: m_appendix(operation.m_appendix) {}
+
+	virtual std::optional<Task> apply(Task task) const;
+
+	virtual void updateParams(OperationParameters params) {
+		m_appendix = std::get<int>(params);
+	}
+
+	virtual OperationParameters getParams() const {
+		return OperationParameters(m_appendix);
+	}
+
+	virtual std::shared_ptr<BaseOperation> clone() const {
+		return std::make_shared<AppendOperation>(*this);
+	}
+};
+
 #endif

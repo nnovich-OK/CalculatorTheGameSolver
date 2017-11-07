@@ -16,6 +16,9 @@ shared_ptr<BaseOperation> BaseOperation::createOperation(const std::type_info& i
 	else if (info == typeid(CutOperation)) {
 		return make_shared<CutOperation>(param);
 	}
+	else if (info == typeid(AppendOperation)) {
+		return make_shared<AppendOperation>(param);
+	}
 	
 	return nullptr;
 }
@@ -79,6 +82,38 @@ std::optional<Task> CutOperation::apply(Task task) const
 {
 	int origValue = task.getBaseValue();
 	int modValue = origValue / 10;
+
+	if (!BaseOperation::verifyChange(origValue, modValue)) {
+		return nullopt;
+	}
+
+	task.decreaseMoveCount();
+	task.setBaseValue(modValue);
+	return task;
+}
+
+std::optional<Task> AppendOperation::apply(Task task) const
+{
+	int origValue = task.getBaseValue();
+	
+	int tmp = m_appendix;
+	int digitCount = 0;
+	while (tmp != 0) {
+		tmp /= 10;
+		digitCount++;
+	}
+
+	// we might want to append single '0'
+	if (digitCount == 0) {
+		digitCount = 1;
+	}
+
+	int modValue = origValue;
+	while (digitCount != 0) {
+		modValue *= 10;
+		digitCount--;
+	}
+	modValue += m_appendix;
 
 	if (!BaseOperation::verifyChange(origValue, modValue)) {
 		return nullopt;

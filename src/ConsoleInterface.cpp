@@ -41,7 +41,7 @@ void ConsoleInterface::main()
 
 		// Normalize input
 		std::transform(commandLine.begin(), commandLine.end(), commandLine.begin(), ::tolower);
-		commandLine = Utils::removeLeadingSpaces(commandLine);
+		commandLine = Utils::reduce(commandLine);
 
 		// Divide into command itself and its parameters
 		size_t spacePos = commandLine.find(' ');
@@ -52,7 +52,8 @@ void ConsoleInterface::main()
 
 		string commandParams;
 		if (spacePos != string::npos) {
-			commandParams = Utils::removeLeadingSpaces(commandLine.substr(spacePos));
+			// after reducing string we are sure, that space is followed by normal char
+			commandParams = commandLine.substr(spacePos+1);
 		}
 
 		bool commandFound = false;
@@ -118,6 +119,10 @@ std::string ConsoleInterface::stringifyOperation(const BaseOperation & operation
 	else if (info == typeid(CutOperation)) {
 		return "<<";
 	}
+	else if (info == typeid(AppendOperation)) {
+		int appendix = get<int>(operation.getParams());
+		return to_string(appendix);
+	}
 
 	return string();
 }
@@ -166,6 +171,8 @@ void ConsoleInterface::handleAddButton(std::string params)
 
 	string coeff;
 	try {
+		bool inputHandled = true;
+
 		switch (params[0]) {
 		case '+':
 		case '-':
@@ -184,6 +191,14 @@ void ConsoleInterface::handleAddButton(std::string params)
 			assert(params[1] == '<');
 			m_task->addOperation(typeid(CutOperation), OperationParameters());
 			break;
+		default:
+			inputHandled = false;
+		}
+
+		if (!inputHandled) {
+			if (Utils::isDigits(params)) {
+				m_task->addOperation(typeid(AppendOperation), stoi(params));
+			}
 		}
 	}
 	catch (const logic_error& e) {
