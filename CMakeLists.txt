@@ -1,0 +1,4 @@
+#TODO test with older versions
+cmake_minimum_required(VERSION 3.10)
+
+add_subdirectory(solver)
