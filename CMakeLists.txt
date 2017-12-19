@@ -1,4 +1,14 @@
 #TODO test with older versions
+#TODO test under linux
 cmake_minimum_required(VERSION 3.10)
 
-add_subdirectory(solver)
+# unit test library
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+add_subdirectory(3rd_party/googletest)
+
+# main project
+add_subdirectory(src)
+
+# unit test project
+add_subdirectory(tests)
+
