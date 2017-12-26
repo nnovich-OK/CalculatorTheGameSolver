@@ -9,6 +9,9 @@ add_subdirectory(3rd_party/googletest)
 # main project
 add_subdirectory(src)
 
+# launcher
+add_subdirectory(launcher)
+
 # unit test project
 add_subdirectory(tests)
 
