@@ -128,6 +128,7 @@ TEST(OperationTest, Addition) {
 	EXPECT_FALSE(rez.has_value());
 }
 
+
 TEST(OperationTest, Multiplication) {
 	Task task;
 	task.setMoveCount(3);
@@ -167,6 +168,44 @@ TEST(OperationTest, Multiplication) {
 	//negative overflow
 	task.setBaseValue(-500000);
 	op.updateParams(-2);
+	rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+}
+
+
+TEST(OperationTest, Division) {
+	Task task;
+	task.setMoveCount(3);
+	task.setBaseValue(12);
+
+	//positive div
+	DivisionOperation op(4);
+	auto rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 3);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//negative div
+	op.updateParams(-4);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), -3);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//div by 1 is ignored
+	op.updateParams(1);
+	rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+
+	//div of 0 is ignored
+	op.updateParams(5);
+	task.setBaseValue(0);
+	rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+
+	//if not a proper divisor, division is ignored
+	task.setBaseValue(12);
+	op.updateParams(5);
 	rez = op.apply(task);
 	EXPECT_FALSE(rez.has_value());
 }
