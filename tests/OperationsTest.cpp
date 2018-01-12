@@ -248,3 +248,66 @@ TEST(OperationTest, Cut) {
 	rez = op.apply(task);
 	EXPECT_FALSE(rez.has_value());
 }
+
+TEST(OperationTest, Append) {
+	Task task;
+	task.setMoveCount(3);
+
+	//append to positive
+	task.setBaseValue(12);
+	AppendOperation op(3);
+	auto rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 123);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//append to negative
+	task.setBaseValue(-12);
+	op.updateParams(3);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), -123);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//append two digits
+	task.setBaseValue(12);
+	op.updateParams(34);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 1234);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//append 0
+	task.setBaseValue(12);
+	op.updateParams(0);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 120);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//append to 0
+	task.setBaseValue(0);
+	op.updateParams(9);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 9);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//ignore appending 0 to 0
+	task.setBaseValue(0);
+	op.updateParams(0);
+	rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+
+	//positive overflow
+	task.setBaseValue(500000);
+	op.updateParams(0);
+	rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+
+	//negative overflow
+	task.setBaseValue(-500000);
+	op.updateParams(0);
+	rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+}
