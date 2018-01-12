@@ -15,10 +15,12 @@ public:
 	Task(const Task& task);
 
 	void setMoveCount(int count) { m_moveCount = count; }
+	int getMoveCount() const     { return m_moveCount; }
 	void decreaseMoveCount()     { m_moveCount--; }
 	bool isOutOfMoves() const    { return (m_moveCount <= 0); }
 
 	void setGoal(int goal)       { m_goal = goal; }
+	int getGoal() const          { return m_goal; }
 	bool isSolved() const        { return (m_goal == m_baseValue); }
 
 	void setBaseValue(int value) { m_baseValue = value; }
