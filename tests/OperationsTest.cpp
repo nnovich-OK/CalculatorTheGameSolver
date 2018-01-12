@@ -209,3 +209,42 @@ TEST(OperationTest, Division) {
 	rez = op.apply(task);
 	EXPECT_FALSE(rez.has_value());
 }
+
+TEST(OperationTest, Cut) {
+	Task task;
+	task.setMoveCount(3);
+	task.setBaseValue(123);
+
+	//cut positive
+	CutOperation op({});
+	auto rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 12);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//cut negative
+	task.setBaseValue(-123);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), -12);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//cut small positive
+	task.setBaseValue(5);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 0);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//cut small negative
+	task.setBaseValue(-5);
+	rez = op.apply(task);
+	ASSERT_TRUE(rez.has_value());
+	EXPECT_EQ(rez.value().getBaseValue(), 0);
+	EXPECT_EQ(rez.value().getMoveCount(), 2);
+
+	//cut of 0 is ignored
+	task.setBaseValue(0);
+	rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+}
