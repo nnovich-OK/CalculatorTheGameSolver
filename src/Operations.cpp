@@ -113,7 +113,13 @@ optional<Task> AppendOperation::apply(Task task) const
 		modValue *= 10;
 		digitCount--;
 	}
-	modValue += m_appendix;
+
+	if (modValue >= 0) {
+		modValue += m_appendix;
+	}
+	else {
+		modValue -= m_appendix;
+	}
 
 	if (!BaseOperation::verifyChange(origValue, modValue)) {
 		return nullopt;
