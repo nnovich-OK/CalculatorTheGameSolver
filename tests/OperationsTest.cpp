@@ -3,8 +3,12 @@
 
 #include "Task.h"
 
+#include <sstream>
+
 
 using namespace std;
+
+/********    SECTION1: common operation tests      ********/
 
 struct OperationManipulationTestParams {
 	const type_info& info;
@@ -91,223 +95,148 @@ INSTANTIATE_TEST_CASE_P(CommonOperationTests,
 );
 
 
-TEST(OperationTest, Addition) {
-	Task task;
-	task.setMoveCount(3);
-	task.setBaseValue(1);
 
-	//positive addition
-	AdditionOperation op(5);
+
+/********    SECTION2: specific operation tests      ********/
+
+void checkOperationResult(const BaseOperation& op, int initialValue, int finalValue) {
+	ostringstream traceString;
+	traceString << "Params: " << op.getParams() << "; initial value: " << initialValue << "; final value: " << finalValue << "\n";
+	SCOPED_TRACE(traceString.str());
+
+	Task task;
+	task.setBaseValue(initialValue);
+	task.setMoveCount(3);
+
 	auto rez = op.apply(task);
 	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 6);
+	EXPECT_EQ(rez.value().getBaseValue(), finalValue);
 	EXPECT_EQ(rez.value().getMoveCount(), 2);
+}
+
+void checkOperationIgnored(const BaseOperation& op, int initialValue) {
+	ostringstream traceString;
+	traceString << "Params: " << op.getParams() << "; initial value: " << initialValue << "\n";
+	SCOPED_TRACE(traceString.str());
+
+	Task task;
+	task.setBaseValue(initialValue);
+	task.setMoveCount(3);
+
+	auto rez = op.apply(task);
+	EXPECT_FALSE(rez.has_value());
+}
+
+TEST(OperationTest, Addition) {
+	//positive addition
+	checkOperationResult(AdditionOperation(5),  1, 6);
+	checkOperationResult(AdditionOperation(5),  0, 5);
+	checkOperationResult(AdditionOperation(5), -1, 4);
 
 	//negative addition
-	op.updateParams(-5);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), -4);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(AdditionOperation(-5),  1, -4);
+	checkOperationResult(AdditionOperation(-5),  0, -5);
+	checkOperationResult(AdditionOperation(-5), -1, -6);
 
 	//zero addition is ignored
-	op.updateParams(0);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(AdditionOperation(0),  1);
+	checkOperationIgnored(AdditionOperation(0),  0);
+	checkOperationIgnored(AdditionOperation(0), -1);
 
-	//positive overflow
-	task.setBaseValue(500000);
-	op.updateParams(500000);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
-
-	//negative overflow
-	task.setBaseValue(-500000);
-	op.updateParams(-500000);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	//overflow
+	checkOperationIgnored(AdditionOperation( 500000),  500000);
+	checkOperationIgnored(AdditionOperation(-500000), -500000);
 }
 
 
 TEST(OperationTest, Multiplication) {
-	Task task;
-	task.setMoveCount(3);
-	task.setBaseValue(2);
-
 	//positive mult
-	MultiplicationOperation op(5);
-	auto rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 10);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(MultiplicationOperation(5),  3,  15);
+	checkOperationResult(MultiplicationOperation(5), -3, -15);
 
 	//negative mult
-	op.updateParams(-5);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), -10);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(MultiplicationOperation(-5),  3, -15);
+	checkOperationResult(MultiplicationOperation(-5), -3,  15);
 
 	//mult by 1 is ignored
-	op.updateParams(1);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(MultiplicationOperation(1),  3);
+	checkOperationIgnored(MultiplicationOperation(1), -3);
 
 	//mult of 0 is ignored
-	op.updateParams(5);
-	task.setBaseValue(0);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(MultiplicationOperation(5),  0);
+	checkOperationIgnored(MultiplicationOperation(0),  0);
+	checkOperationIgnored(MultiplicationOperation(-5), 0);
 
-	//positive overflow
-	task.setBaseValue(500000);
-	op.updateParams(2);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
-
-	//negative overflow
-	task.setBaseValue(-500000);
-	op.updateParams(-2);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	//overflow
+	checkOperationIgnored(MultiplicationOperation(2),  500000);
+	checkOperationIgnored(MultiplicationOperation(-2), 500000);
+	checkOperationIgnored(MultiplicationOperation(2),  -500000);
+	checkOperationIgnored(MultiplicationOperation(-2), -500000);
 }
 
 
 TEST(OperationTest, Division) {
-	Task task;
-	task.setMoveCount(3);
-	task.setBaseValue(12);
-
 	//positive div
-	DivisionOperation op(4);
-	auto rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 3);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(DivisionOperation(4),  12,  3);
+	checkOperationResult(DivisionOperation(4), -12, -3);
 
 	//negative div
-	op.updateParams(-4);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), -3);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(DivisionOperation(-4),  12, -3);
+	checkOperationResult(DivisionOperation(-4), -12,  3);
 
 	//div by 1 is ignored
-	op.updateParams(1);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(DivisionOperation(1),  12);
+	checkOperationIgnored(DivisionOperation(1), -12);
 
 	//div of 0 is ignored
-	op.updateParams(5);
-	task.setBaseValue(0);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(DivisionOperation(4), 0);
+	checkOperationIgnored(DivisionOperation(-4), 0);
+
+	//div by 0 is ignored
+	checkOperationIgnored(DivisionOperation(0),  12);
+	checkOperationIgnored(DivisionOperation(0), -12);
 
 	//if not a proper divisor, division is ignored
-	task.setBaseValue(12);
-	op.updateParams(5);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(DivisionOperation(5),   12);
+	checkOperationIgnored(DivisionOperation(5),  -12);
+	checkOperationIgnored(DivisionOperation(-5),  12);
+	checkOperationIgnored(DivisionOperation(-5), -12);
 }
 
 TEST(OperationTest, Cut) {
-	Task task;
-	task.setMoveCount(3);
-	task.setBaseValue(123);
-
 	//cut positive
-	CutOperation op({});
-	auto rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 12);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(CutOperation({}), 123, 12);
+	checkOperationResult(CutOperation({}),   5,  0);
 
 	//cut negative
-	task.setBaseValue(-123);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), -12);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
-
-	//cut small positive
-	task.setBaseValue(5);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 0);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
-
-	//cut small negative
-	task.setBaseValue(-5);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 0);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(CutOperation({}), -123, -12);
+	checkOperationResult(CutOperation({}),   -5,   0);
 
 	//cut of 0 is ignored
-	task.setBaseValue(0);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(CutOperation({}), 0);
 }
 
 TEST(OperationTest, Append) {
-	Task task;
-	task.setMoveCount(3);
-
 	//append to positive
-	task.setBaseValue(12);
-	AppendOperation op(3);
-	auto rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 123);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(AppendOperation(3),  12,  123);
+	checkOperationResult(AppendOperation(34), 12, 1234);
 
 	//append to negative
-	task.setBaseValue(-12);
-	op.updateParams(3);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), -123);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
-
-	//append two digits
-	task.setBaseValue(12);
-	op.updateParams(34);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 1234);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
-
-	//append 0
-	task.setBaseValue(12);
-	op.updateParams(0);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 120);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(AppendOperation(3),  -12,  -123);
+	checkOperationResult(AppendOperation(34), -12, -1234);
 
 	//append to 0
-	task.setBaseValue(0);
-	op.updateParams(9);
-	rez = op.apply(task);
-	ASSERT_TRUE(rez.has_value());
-	EXPECT_EQ(rez.value().getBaseValue(), 9);
-	EXPECT_EQ(rez.value().getMoveCount(), 2);
+	checkOperationResult(AppendOperation(3),  0,  3);
+	checkOperationResult(AppendOperation(34), 0, 34);
+
+	//append 0
+	checkOperationResult(AppendOperation(0),  12,  120);
+	checkOperationResult(AppendOperation(0), -12, -120);
 
 	//ignore appending 0 to 0
-	task.setBaseValue(0);
-	op.updateParams(0);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	checkOperationIgnored(AppendOperation(0), 0);
 
-	//positive overflow
-	task.setBaseValue(500000);
-	op.updateParams(0);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
-
-	//negative overflow
-	task.setBaseValue(-500000);
-	op.updateParams(0);
-	rez = op.apply(task);
-	EXPECT_FALSE(rez.has_value());
+	//overflow
+	checkOperationIgnored(AppendOperation(0), 100000);
+	checkOperationIgnored(AppendOperation(0), -100000);
 }
