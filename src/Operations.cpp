@@ -62,6 +62,10 @@ optional<Task> MultiplicationOperation::apply(Task task) const
 
 optional<Task> DivisionOperation::apply(Task task) const
 {
+	if (m_divisor == 0) {
+		return nullopt;
+	}
+
 	int origValue = task.getBaseValue();
 	if (origValue % m_divisor != 0) {
 		return nullopt;
